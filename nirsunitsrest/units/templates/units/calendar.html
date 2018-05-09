@@ -1,0 +1,249 @@
+{% extends "units/base.html" %}
+
+{% block content %}
+
+<h5 style="margin: 5px">Установка: {{ unit }}</h5>
+
+  <!-- храним id установки, чтобы вытащить javascript'ом и записать в переменную -->
+<input type="hidden" id="unitId" name="variable" value="{{ unit.id }}">
+<input type="hidden" id="unitName" name="variable" value="{{ unit.unit_name }}">
+<input type="hidden" id="loginedUser" name="variable" value="{{ request.user.first_name }} {{ request.user.last_name }}">
+
+<div id="notifies"></div>
+
+<div class="container">
+    <div id='calendar' style="width: 100%"></div>
+</div>
+
+
+
+<!-- NEW REALISATION -->
+<div class="modal fade" id="mainForm" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Тут ТИТЛ</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <form name="mainForm">
+
+            <div class="form-group">
+                <label>Объект испытания</label>
+                <input type="text" name="subject" class="form-control">
+            </div>
+  
+            <div class="form-group">
+              <label>Начало испытания</label>
+              <input type="text" name="timeStart" 
+                class="form-control timepicker"
+                placeholder="Укажите время начала">
+            </div>
+    
+            <div class="form-group">
+              <label>Конец испытания</label>
+              <input type="text" name="timeEnd"
+              class="form-control timepicker"
+              placeholder="Укажите время окончания">
+            </div>
+
+            <div class="dropdown-divider"></div>
+    
+            <select class="custom-select" name="tester">
+              <option value="-1" selected>Выберете испытателя</option>
+                {% for tester in testers %}
+                <option value="{{tester.id}}">{{ tester }}</option>
+                {% endfor %}
+            </select>
+
+            <div class="dropdown-divider"></div>
+
+            <select class="custom-select" name="distance">
+              <option value="-1" selected>Выберете расстояние</option>
+                <option value="1">Малое</option>
+                <option value="2">Среднее</option>
+                <option value="3">Большое</option>    
+            </select>
+    
+            <div class="dropdown-divider"></div>
+    
+            <div class="form-group">
+              <label>Примечание</label>
+              <textarea class="form-control" name="noteText" rows="3"></textarea>
+            </div>
+
+          </form>
+        </div>
+
+        <div class="modal-footer justify-content-end">
+          <button name="btnCancel" type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">Отмена</button>
+          
+          <div class="event-form">
+            <button name="btnDelete" type="button" class="btn btn-danger">Удалить</button>
+            <button name="btnUpdate" type="button" class="btn btn-primary">Изменить</button>
+            <button name="btnApplyUpdates" type="button" class="btn btn-success">Применить</button>
+          </div>
+
+          <div class="blank-form">
+            <button name="btnCreate" type="button" class="btn btn-success">Записаться</button>
+          </div>
+
+        </div>
+
+        <div class="modal-footer justify-content-start event-owner">
+          <p>Владелец записи</p>
+        </div>
+
+      </div>
+    </div>
+</div>
+
+
+
+<!-- info -->
+
+<div class="modal fade" id="eventInfo" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div>
+            <span><b>Испытатель:  </b></span><span id="eventInfoTester"></span>
+          </div>
+          <div>
+            <span><b>Начало:  </b></span><span id="eventInfoStart"></span>
+          </div>
+          <div>
+            <span><b>Конец:  </b></span><span id="eventInfoEnd"></span>
+          </div>
+          <div>
+            <span><b>Объект испытания:  </b></span><span id="eventInfoObject"></span>
+          </div>
+          <div>
+            <span><b>Дистанция:   </b></span><span id="eventInfoDistance"></span>
+          </div>
+  
+  
+        </div>
+  
+        <div class="modal-footer">
+          <p id="ownerOrNot" class="info" style="display: block;">Вы не являетесь владельцем записи</p>
+  
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" id="updateButton" class="btn btn-primary" onclick="openUpdateWindow()">Изменить</button>
+  
+          <button type="button" id="deleteButton" class="btn btn-danger btn-ok" onclick="confirmDelete()">Удалить запись</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+<!-- NEW REALISATION -->
+
+
+
+
+
+
+
+<!-- modal window to create -->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Запись на испытание</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="formInputObject">Объект испытания</label>
+            <input type="text" class="form-control" id="formInputObject" onchange="retrieveFormObject()">
+          </div>
+
+          <div class="form-group">
+            <label for="formInputObject">Начало испытания</label>
+            <input type="text" class="form-control timepicker" id="formInputTimeStart" onchange="retrieveFormTimeStart()">
+          </div>
+
+          <div class="form-group">
+            <label for="formInputObject">Конец испытания</label>
+            <input type="text" class="form-control timepicker" id="formInputTimeEnd" onchange="retrieveFormTimeEnd()">
+          </div>
+
+          <select class="custom-select" id="selectTester" onchange="retrieveSelectOfTester()">
+            <option selected>Выберете испытателя</option>
+              {% for tester in testers %}
+              <option value="{{tester.id}}">{{ tester }}</option>
+              {% endfor %}
+          </select>
+
+          <div class="dropdown-divider"></div>
+
+          <select class="custom-select" id="selectDistance" onchange="retrieveSelectOfDistance()">
+            <option selected>Выберете расстояние</option>
+              <option value="1">Малое</option>
+              <option value="2">Среднее</option>
+              <option value="3">Большое</option>    
+          </select>
+
+          <div class="dropdown-divider"></div>
+
+          <div class="form-group">
+            <label for="FormControlTextarea">Примечание</label>
+            <textarea class="form-control" id="formNoteText" rows="3" onchange="retrieveFormNote()"></textarea>
+          </div>
+
+          <!-- Allow form submission with keyboard without duplicating the dialog button -->
+          <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+            <input type="submit" class="btn btn-primary" id="model-submit" value="Записаться">
+            
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- confirm delete -->
+<div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteInfoTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span><b>Вы уверены что хотите удалить запись?</b></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger btn-ok" onclick="deleteEvent(event);">Удалить запись</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- alerts -->
+<div class="alert alert-danger" id="dateError" style="display:none; z-index:9999;">
+</div>
+
+{% endblock %}
