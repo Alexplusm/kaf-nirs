@@ -4,7 +4,6 @@ const {
   resetForm,
   setForm,
 } = require('./formFields');
-
 const {FormState} = require('./formState');
 const formState = new FormState();
 
@@ -64,14 +63,8 @@ const openForm = () => { $("#mainForm").modal('show'); };
 // Обработка кнопок -!-!- Обработка кнопок
 // Обработка кнопок -!-!- Обработка кнопок
 
-const btnDelete = document.getElementsByName('btnDelete')[0];
-const btnUpdate = document.getElementsByName('btnUpdate')[0];
-const btnCreate = document.getElementsByName('btnCreate')[0];
-const btnApplyUpdates = document.getElementsByName('btnApplyUpdates')[0];
-
-// рудимент?
-const btnCancel = document.getElementsByName('btnCancel')[0];
-
+const {btnDelete, btnUpdate, btnCreate,
+  btnApplyUpdates, btnCancel} = require('./formButtons');
 
 btnDelete.addEventListener('click', () => {
   console.log('btnDelete', btnDelete);
@@ -92,5 +85,15 @@ btnApplyUpdates.addEventListener('click', () => {
 
 // Обработка кнопок -!-!- Обработка кнопок
 // Обработка кнопок -!-!- Обработка кнопок
+
+
+// test zone
+// test zone
+
+const {testXHR} = require('./requests');
+console.log('WTF???');
+testXHR();
+// test zone
+// test zone
 
 module.exports = {openBlankForm, openWithEventForm, changeFormStateToUpdate, formState};
