@@ -1,18 +1,10 @@
 # -*- coding: utf-8 -*-
-
+from django.core.mail import send_mail
 from django.db import models
 from django.db.models import Q
-
-from django.contrib.auth.models import User
-
 from django.db.models.signals import pre_save, post_save, pre_delete, post_delete
 
-# from contracts.models import Contract
-# from budget.models import NTGroup
-
-from django.core.mail import send_mail
-
-# import MySQLdb
+from django.contrib.auth.models import User
 
 import datetime
 
@@ -21,6 +13,8 @@ from datetime import time
 
 from django.utils import timezone
 
+# from contracts.models import Contract
+# from budget.models import NTGroup
 
 def get_all_users_emails():
     all_testers = UnitUserProfile.objects.filter(notice_me=True)
@@ -104,44 +98,6 @@ def send_email_to_all(my_email, subject, start_time = None, stop_time = None):
         )
 
 
-def sync_mysql():
-    today = timezone.now().date()
-    # соединяемся с базой данных
-    db = MySQLdb.connect(host="localhost", port=0, user="user", passwd="pass", db="db", charset='utf8')
-    # формируем курсор
-    cursor = db.cursor()
-    # очищаем таблицу
-    cursor.execute('TRUNCATE TABLE table')
-
-    my_records = UnitSchedule.objects.filter(unit__unit_name = 'Ускоритель').filter(
-        Q(start_work__date__gte=today)|
-        Q(end_work__date__gte=today)
-        )
-
-    mysqlqueryset = []
-    
-    for rec in my_records:
-        c1 = rec.start_work.strftime("%Y-%m-%d %H:%M")
-        c2 = rec.end_work.strftime("%Y-%m-%d %H:%M")
-        c3 = "%s %s" % (rec.tester.last_name, rec.tester.first_name)
-        c4 = rec.tester.units_profile.ntg.ntg
-        c5 = rec.test_object
-        c6 = rec.contract.contract_num
-        c7 = rec.note_text
-        c8 = rec.tester.email
-        mysqlqueryset.append((c1, c2, c3, c4, c5, c6, c7, c8))
-
-    sql = "INSERT INTO table (column1, column2, column3, column4, column5, column6, column7, column8) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
- 
-    # выполняем запрос
-    cursor.executemany(sql, mysqlqueryset)
-
-    # закрываем соединение с БД
-    db.close()    
-
-
-
-
 class Unit(models.Model):
     unit_name = models.CharField('Наименование', unique = True, max_length=100)
     unit_manager = models.ForeignKey(User, related_name = 'unit_manager', verbose_name='Начальник установки')
@@ -197,42 +153,6 @@ def get_free_date(unit=None):
             if (single_date not in busy_dates) and (single_date.weekday() not in [5,6]):
                 return single_date
     return timezone.now()+datetime.timedelta(days=1)
-
-
-def schedule_receiver(sender, instance, *args, **kwargs):
-    if instance.edit_date - instance.reg_date <= datetime.timedelta(seconds=1):
-        send_email(instance, u'Запись на установку')
-    else:
-        send_email(instance, u'Редактирование записи на установку')
-    if instance.unit.unit_name == u'Ускоритель':
-        sync_mysql()
-
-
-def pre_del_schedule_receiver(sender, instance, *args, **kwargs):
-    send_email(instance, u'Удаление записи на установку')
-    send_email_to_all(instance, u'Удалена запись на установку - %s' % instance.unit)
-
-
-def post_del_schedule_receiver(sender, instance, *args, **kwargs):
-    if instance.unit.unit_name == u'Ускоритель':
-        sync_mysql()
-
-
-def update_schedule_receiver(sender, instance, **kwargs):
-    if instance.id:
-        old_schedule = UnitSchedule.objects.get(pk=instance.id)
-        old_start_time = old_schedule.start_work
-        old_stop_time = old_schedule.end_work
-        send_email_to_all(instance, u'Освободилось время на установке - %s' % instance.unit, old_start_time, old_stop_time)
-
-# pre_save.connect(update_schedule_receiver, sender=UnitSchedule)
-# post_save.connect(schedule_receiver, sender=UnitSchedule)
-
-# pre_delete.connect(pre_del_schedule_receiver, sender=UnitSchedule)
-# post_delete.connect(post_del_schedule_receiver, sender=UnitSchedule)
-
-
-
 
 
 # REST
