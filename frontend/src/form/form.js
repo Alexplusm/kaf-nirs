@@ -3,25 +3,28 @@ const {
   abledForm,
   resetForm,
   setForm,
+  retrieveForm,
+  resetFormValidation,
 } = require('./formFields');
+
+const {ajaxRequest} = require('./requests');
+
 const {FormState} = require('./formState');
 const formState = new FormState();
 
 const changeFormStateToUpdate = () => {
   // при нажатии на кнопку 'изменить'
   // активируем кнопку 'применить' и блокируем кнопку 'изменитьэ
-  console.log('---- in --- changeFormStateToUpdate');
+  // console.log('---- in --- changeFormStateToUpdate');
   formState.setNewState(3);
 };
 
 const openBlankForm = (data) => {
   resetForm();
   abledForm();
+  resetFormValidation();
   formState.setNewState(1);
-
-  // for TEST
-  // for TEST
-
+  
   const wrapData = moment(data);
 
   if (wrapData.isValid) {
@@ -36,6 +39,7 @@ const openBlankForm = (data) => {
 
 const openWithEventForm = (event) => {
   disabledForm();
+  resetFormValidation();
   formState.setNewState(2);
 
   console.log('eventick', event);
@@ -56,8 +60,6 @@ const openWithEventForm = (event) => {
   openForm();
 }
 
-
-
 const openForm = () => { $("#mainForm").modal('show'); };
 
 // Обработка кнопок -!-!- Обработка кнопок
@@ -72,11 +74,20 @@ btnDelete.addEventListener('click', () => {
 
 btnUpdate.addEventListener('click', () => {
   console.log('btnUpdate', btnUpdate);
+  
   changeFormStateToUpdate();
 });
 
 btnCreate.addEventListener('click', () => {
   console.log('btnCreate', btnCreate);
+
+  retrieveForm();
+
+  // ajaxRequest({
+  //   type: 'GET',
+  //   url: '../../unit_schedule/',
+  //   data: {'unit': 2}
+  // });
 });
 
 btnApplyUpdates.addEventListener('click', () => {
@@ -88,12 +99,7 @@ btnApplyUpdates.addEventListener('click', () => {
 
 
 // test zone
-// test zone
 
-const {testXHR} = require('./requests');
-console.log('WTF???');
-testXHR();
-// test zone
 // test zone
 
 module.exports = {openBlankForm, openWithEventForm, changeFormStateToUpdate, formState};

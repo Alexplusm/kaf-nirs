@@ -116,5 +116,3 @@ class RecordForm (forms.ModelForm):
                 msg = u"К сожалению, данное время занято. Пожалуйста, укажите свободное время!"
                 self.add_error('start_work', msg)
                 self.add_error('end_work', msg)
-
-                

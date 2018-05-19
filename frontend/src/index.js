@@ -1,4 +1,6 @@
 const {fullCalendar} = require('./calendar');
+const {initForm} = require('./form/formFields');
+
 
 var unit_js = document.getElementById("unitId").value;
 var unit_name_js = document.getElementById("unitName").value;
@@ -6,15 +8,22 @@ var logined_user = document.getElementById("loginedUser").value;
 var dataWithoutTime = "1";
 var eventId = 0;
 
+// global test
+const {ajaxRequest} = require('./form/requests');
+
+// global test
+
 // запуск календаря
 $(document).ready(fullCalendar());
+$(document).ready(initForm());
 // запуск календаря
 
+const {csrfSafeMethod} = require('./utils')
 
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-        }
+// function csrfSafeMethod(method) {
+//     // these HTTP methods do not require CSRF protection
+//     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+// }
 
 
 function addEvent(dataWithoutTime) {
@@ -31,7 +40,7 @@ function addEvent(dataWithoutTime) {
 
         url: "../../unit_schedule/",
 
-        data: {   
+        data: {
 
             "unit": unit_js,
             "start_work": timeStart,

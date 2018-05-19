@@ -36,8 +36,14 @@
                 <label>Объект испытания</label>
                 <input type="text" name="subject" 
                 class="form-control" 
-                placeholder="Укажите объект">
+                placeholder="Укажите объект"
+                required>
+                
+                <div class="invalid-feedback">
+                  Поле не заполнено
+                </div>
             </div>
+
   
             <div class="form-group">
               <label>Начало испытания</label>
@@ -66,9 +72,9 @@
 
             <select class="custom-select" name="distance">
               <option value="-1" selected>Выберете расстояние</option>
-                <option value="1">Малое</option>
-                <option value="2">Среднее</option>
-                <option value="3">Большое</option>    
+                <option value="Малое">Малое</option>
+                <option value="Среднее">Среднее</option>
+                <option value="Большое">Большое</option>    
             </select>
     
             <div class="dropdown-divider"></div>
