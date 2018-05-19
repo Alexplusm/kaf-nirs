@@ -1,6 +1,6 @@
 const {fullCalendar} = require('./calendar');
 const {initForm} = require('./form/formFields');
-
+const {csrfSafeMethod} = require('./utils');
 
 var unit_js = document.getElementById("unitId").value;
 var unit_name_js = document.getElementById("unitName").value;
@@ -18,12 +18,6 @@ $(document).ready(fullCalendar());
 $(document).ready(initForm());
 // запуск календаря
 
-const {csrfSafeMethod} = require('./utils')
-
-// function csrfSafeMethod(method) {
-//     // these HTTP methods do not require CSRF protection
-//     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-// }
 
 
 function addEvent(dataWithoutTime) {
@@ -147,71 +141,6 @@ function openUpdateWindow() {
     $("#updateEventModal").modal('show');
 }
 
-// for create modal window
-   
-
-function retrieveFormTimeStart() {
-  form = document.getElementById("formInputTimeStart");
-  timeStart = String(dataWithoutTime + " " + String(form.value).slice(0,-1));
-}   
-
-// добавить выбор дня окнчания испытания
-function retrieveFormTimeEnd() {
-  form = document.getElementById("formInputTimeEnd");
-  timeEnd = String(dataWithoutTime + " " + String(form.value).slice(0,-1));
-}
-
-function retrieveAllForms() {
-    retrieveSelectOfTester();
-    retrieveSelectOfDistance();
-    retrieveFormObject();
-    retrieveFormNote();
-    retrieveFormTimeStart();
-    retrieveFormTimeEnd();
-}
-
-// for update modal window
-function retrieveSelectOfTesterUpdate() {
-    select = document.getElementById("selectTesterUpdate"); // Выбираем  select по id
-    selectTesterValue = select.options[select.selectedIndex].value; // Значение value для выбранного option
-    }
-
-function retrieveSelectOfDistanceUpdate() {
-    select = document.getElementById("selectDistanceUpdate"); // Выбираем  select по id
-    selectDistanceValue = select.options[select.selectedIndex].value; // Значение value для выбранного option
-    }
-
-function retrieveFormObjectUpdate() {
-  form = document.getElementById("formInputObjectUpdate");
-  formInputObjectValue = form.value;
-}    
-
-// добавить обработку undefind
-function retrieveFormNoteUpdate() {
-  form = document.getElementById("formNoteTextUpdate");
-  formInputNoteText = form.value;
-}    
-
-function retrieveFormTimeStartUpdate() {
-  form = document.getElementById("formInputTimeStartUpdate");
-  timeStart = String(dataWithoutTime + " " + String(form.value).slice(0,-1));
-}   
-
-// добавить выбор дня окнчания испытания
-function retrieveFormTimeEndUpdate() {
-  form = document.getElementById("formInputTimeEndUpdate");
-  timeEnd = String(dataWithoutTime + " " + String(form.value).slice(0,-1));
-}
-
-function retrieveAllFormsUpdate() {
-    retrieveSelectOfTesterUpdate();
-    retrieveSelectOfDistanceUpdate();
-    retrieveFormObjectUpdate();
-    retrieveFormNoteUpdate();
-    retrieveFormTimeStartUpdate();
-    retrieveFormTimeEndUpdate();
-}
-
 ///////////////////////////////////////////////////////
 
 function eventList(){
@@ -306,4 +235,3 @@ function check_user(user_full_name) {
         $('#deleteButton').prop('disabled',true);
     }
 }
-

@@ -25,10 +25,10 @@ from .models import (
     UnitSchedule,
     )
 
-from .forms import (
-    MyAccountForm,
-    RecordForm,
-    )
+# from .forms import (
+#     MyAccountForm,
+#     RecordForm,
+#     )
 
 
 
@@ -194,98 +194,98 @@ class MyRecListView(ListView):
         return context
 
 
-@login_required()
-@user_passes_test(check_access_app, '/accessdenied/', None)
-def record_edit(request, pk=None):
-    my_role = request.user.units_profile
-    if my_role.tester:
-        record = get_object_or_404(UnitSchedule, pk=pk)
-        if record.tester == request.user:
-            form = RecordForm(request.POST or None, instance=record)
-            if request.method == 'POST':
-                if form.is_valid():
-                    instance = form.save(commit = False)
-                    instance.save()
-                    text_message = make_message_text(instance.unit, instance.start_work)
-                    if text_message:
-                        messages.info(request, text_message, extra_tags='html_save')
-                    return redirect('units:myrecords_list')
-            content = {
-                'header': 'Запись на установку',
-                'title': 'Запись',
-                'button': 'Изменить',
-                'form': form,
-                'location' : 'myrecords_list',
-            }
-            return render(request, "units/form-center.html", content)
-        raise Http404
-    else:
-        raise Http404
+# @login_required()
+# @user_passes_test(check_access_app, '/accessdenied/', None)
+# def record_edit(request, pk=None):
+#     my_role = request.user.units_profile
+#     if my_role.tester:
+#         record = get_object_or_404(UnitSchedule, pk=pk)
+#         if record.tester == request.user:
+#             form = RecordForm(request.POST or None, instance=record)
+#             if request.method == 'POST':
+#                 if form.is_valid():
+#                     instance = form.save(commit = False)
+#                     instance.save()
+#                     text_message = make_message_text(instance.unit, instance.start_work)
+#                     if text_message:
+#                         messages.info(request, text_message, extra_tags='html_save')
+#                     return redirect('units:myrecords_list')
+#             content = {
+#                 'header': 'Запись на установку',
+#                 'title': 'Запись',
+#                 'button': 'Изменить',
+#                 'form': form,
+#                 'location' : 'myrecords_list',
+#             }
+#             return render(request, "units/form-center.html", content)
+#         raise Http404
+#     else:
+#         raise Http404
 
 
-@login_required()
-@user_passes_test(check_access_app, '/accessdenied/', None)
-def record_add(request, unit = None):
-    my_role = request.user.units_profile
-    if my_role.tester:
-        today_y = timezone.now().year
-        today_m = timezone.now().month
-        today_d = timezone.now().day
-        if unit:
-            my_unit = get_object_or_404(Unit, unit_name = unit)
-            free_date = get_free_date(my_unit)
-            busy_dates = get_busy_dates(my_unit)
-            disabledDates = []
-            for busy_date in busy_dates:
-                disabledDates.append(busy_date.strftime('%m/%d/%Y'))
-            initial = {
-                'unit': my_unit,
-                'start_work': datetime(free_date.year, free_date.month, free_date.day, 11),
-                'end_work': datetime(free_date.year, free_date.month, free_date.day, 20),
-                'tester': request.user,
-                }
-        else:
-            disabledDates = []
-            initial = {
-                'start_work': datetime(today_y, today_m, today_d + 1 ,11),
-                'end_work': datetime(today_y, today_m, today_d + 1 ,20),
-                'tester': request.user,
-                }
-        minDate = datetime(today_y, today_m, today_d).strftime('%m/%d/%Y')
-        form = RecordForm(request.POST or None, initial=initial)
-        if request.method == 'POST':
-            if form.is_valid():
-                instance = form.save(commit = False)
-                instance.save()
-                text_message = make_message_text(instance.unit, instance.start_work)
-                if text_message:
-                    messages.info(request, text_message, extra_tags='html_save')
-                return redirect('units:myrecords_list')
-        content = {
-            'minDate': minDate,
-            'disabledDates': disabledDates,
-            'header': 'Запись на установку',
-            'title': 'Запись',
-            'button': 'Записаться',
-            'form': form,
-            'location' : 'myrecords_list',
-        }
-        return render(request, "units/form-center.html", content)
-    else:
-        raise Http404
+# @login_required()
+# @user_passes_test(check_access_app, '/accessdenied/', None)
+# def record_add(request, unit = None):
+#     my_role = request.user.units_profile
+#     if my_role.tester:
+#         today_y = timezone.now().year
+#         today_m = timezone.now().month
+#         today_d = timezone.now().day
+#         if unit:
+#             my_unit = get_object_or_404(Unit, unit_name = unit)
+#             free_date = get_free_date(my_unit)
+#             busy_dates = get_busy_dates(my_unit)
+#             disabledDates = []
+#             for busy_date in busy_dates:
+#                 disabledDates.append(busy_date.strftime('%m/%d/%Y'))
+#             initial = {
+#                 'unit': my_unit,
+#                 'start_work': datetime(free_date.year, free_date.month, free_date.day, 11),
+#                 'end_work': datetime(free_date.year, free_date.month, free_date.day, 20),
+#                 'tester': request.user,
+#                 }
+#         else:
+#             disabledDates = []
+#             initial = {
+#                 'start_work': datetime(today_y, today_m, today_d + 1 ,11),
+#                 'end_work': datetime(today_y, today_m, today_d + 1 ,20),
+#                 'tester': request.user,
+#                 }
+#         minDate = datetime(today_y, today_m, today_d).strftime('%m/%d/%Y')
+#         form = RecordForm(request.POST or None, initial=initial)
+#         if request.method == 'POST':
+#             if form.is_valid():
+#                 instance = form.save(commit = False)
+#                 instance.save()
+#                 text_message = make_message_text(instance.unit, instance.start_work)
+#                 if text_message:
+#                     messages.info(request, text_message, extra_tags='html_save')
+#                 return redirect('units:myrecords_list')
+#         content = {
+#             'minDate': minDate,
+#             'disabledDates': disabledDates,
+#             'header': 'Запись на установку',
+#             'title': 'Запись',
+#             'button': 'Записаться',
+#             'form': form,
+#             'location' : 'myrecords_list',
+#         }
+#         return render(request, "units/form-center.html", content)
+#     else:
+#         raise Http404
 
 
-@login_required()
-@user_passes_test(check_access_app, '/accessdenied/', None)
-def record_delete(request, pk = None):
-    my_role = request.user.units_profile
-    if my_role.tester:
-        record = get_object_or_404(UnitSchedule, pk=pk)
-        if record.tester == request.user and not record.is_past_due:
-            record.delete()
-    else:
-        raise Http404
-    return redirect('units:myrecords_list')
+# @login_required()
+# @user_passes_test(check_access_app, '/accessdenied/', None)
+# def record_delete(request, pk = None):
+#     my_role = request.user.units_profile
+#     if my_role.tester:
+#         record = get_object_or_404(UnitSchedule, pk=pk)
+#         if record.tester == request.user and not record.is_past_due:
+#             record.delete()
+#     else:
+#         raise Http404
+#     return redirect('units:myrecords_list')
 
 
 @login_required()
@@ -299,28 +299,28 @@ def record_print(request, pk=None):
     return render(request, "units/print.html", content)
 
 
-@login_required()
-@user_passes_test(check_access_app, '/accessdenied/', None)
-def my_account(request):
-    my_role = request.user.units_profile
-    if my_role.tester:
-        record = get_object_or_404(UnitUserProfile, user=request.user)
-        form = MyAccountForm(request.POST or None, instance=record)
-        if request.method == 'POST':
-            if form.is_valid():
-                instance = form.save(commit = False)
-                instance.save()
-                return redirect('units:myrecords_list')
-        content = {
-            'header': 'Личный кабинет',
-            'title': 'Настройки',
-            'button': 'Сохранить',
-            'form': form,
-            'location' : 'my_account',
-        }
-        return render(request, "units/form-center.html", content)
-    else:
-        raise Http404
+# @login_required()
+# @user_passes_test(check_access_app, '/accessdenied/', None)
+# def my_account(request):
+#     my_role = request.user.units_profile
+#     if my_role.tester:
+#         record = get_object_or_404(UnitUserProfile, user=request.user)
+#         form = MyAccountForm(request.POST or None, instance=record)
+#         if request.method == 'POST':
+#             if form.is_valid():
+#                 instance = form.save(commit = False)
+#                 instance.save()
+#                 return redirect('units:myrecords_list')
+#         content = {
+#             'header': 'Личный кабинет',
+#             'title': 'Настройки',
+#             'button': 'Сохранить',
+#             'form': form,
+#             'location' : 'my_account',
+#         }
+#         return render(request, "units/form-center.html", content)
+#     else:
+#         raise Http404
 
 
 
@@ -406,22 +406,6 @@ class UnitScheduleViewSet(viewsets.ModelViewSet):
     #     instance = self.get_object()
     #     self.perform_destroy(instance)
     #     return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

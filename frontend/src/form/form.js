@@ -102,4 +102,7 @@ btnApplyUpdates.addEventListener('click', () => {
 
 // test zone
 
-module.exports = {openBlankForm, openWithEventForm, changeFormStateToUpdate, formState};
+module.exports = {
+  openBlankForm, openWithEventForm,
+  changeFormStateToUpdate, formState
+};
