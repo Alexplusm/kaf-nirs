@@ -1,6 +1,8 @@
 const {fullCalendar} = require('./calendar');
 const {initForm} = require('./form/formFields');
 const {csrfSafeMethod} = require('./utils');
+const {dateTimePickerSetup} = require('./form/formInit');
+
 
 var unit_js = document.getElementById("unitId").value;
 var unit_name_js = document.getElementById("unitName").value;
@@ -16,6 +18,7 @@ const {ajaxRequest} = require('./form/requests');
 // запуск календаря
 $(document).ready(fullCalendar());
 $(document).ready(initForm());
+$(document).ready(dateTimePickerSetup());
 // запуск календаря
 
 

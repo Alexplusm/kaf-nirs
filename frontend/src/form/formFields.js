@@ -109,6 +109,8 @@ const formValidation = () => {
     }
   });
 
+  
+
   // if (noteTextArea.value) {
   //   noteTextArea
   //   noteTextArea
@@ -122,17 +124,7 @@ const initForm = () => {
     el.addEventListener('focus', () => {
       el.classList.remove('is-invalid');
     });
-    // el.addEventListener('blur', () => {
-    //   if (el.value) {
-    //     el.classList.add('is-valid');
-    //     el.classList.remove('is-invalid');
-    //   } else {
-    //     el.classList.add('is-invalid');
-    //     el.classList.remove('is-valid');
-    //   }
-    // });
   });
-
 
   noteTextArea.addEventListener('focus', () => {
     noteTextArea.classList.remove('is-invalid');

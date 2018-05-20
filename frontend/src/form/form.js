@@ -58,7 +58,7 @@ const openWithEventForm = (event) => {
 
   setForm(dataFromEvent);
   openForm();
-}
+};
 
 const openForm = () => { $("#mainForm").modal('show'); };
 
