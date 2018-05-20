@@ -6,26 +6,30 @@ const logined_user = document.getElementById("loginedUser").value;
 const dataWithoutTime = "1";
 let eventId = 0;
 
+// setup params
+const minTime = '09:00:00';
+const maxTime = '22:30:00';
+// setup params
+
 const fullCalendar = function() {
 
   $('#calendar').fullCalendar({
 
       locale: 'ru',
-
-      themeSystem: 'jquery-ui',
+      minTime: minTime,
+      maxTime: maxTime,
 
       defaultView: 'agendaWeek',
 
       events: {
-
-          type: "GET",
-          url: "../../unit_schedule/",
-          data: {"unit": unit_js},
-          cache: false,
-          success: function(data, event){
-                  console.log(data);                
-              },
-          textColor: 'black',
+        type: "GET",
+        url: "../../unit_schedule/",
+        data: {"unit": unit_js},
+        cache: false,
+        success: function(data, event){
+            console.log(data);                
+        },
+        textColor: 'black',
       },
 
       header: {

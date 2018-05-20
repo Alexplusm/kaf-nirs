@@ -5,6 +5,7 @@ const {
   setForm,
   retrieveForm,
   resetFormValidation,
+  formValidation,
 } = require('./formFields');
 
 const {ajaxRequest} = require('./requests');
@@ -81,13 +82,8 @@ btnUpdate.addEventListener('click', () => {
 btnCreate.addEventListener('click', () => {
   console.log('btnCreate', btnCreate);
 
+  formValidation();
   retrieveForm();
-
-  // ajaxRequest({
-  //   type: 'GET',
-  //   url: '../../unit_schedule/',
-  //   data: {'unit': 2}
-  // });
 });
 
 btnApplyUpdates.addEventListener('click', () => {

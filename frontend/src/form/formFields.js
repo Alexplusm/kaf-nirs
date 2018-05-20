@@ -1,3 +1,5 @@
+const {showError, hideError} = require('./formValidationMsg');
+
 const form = document.forms['mainForm'];
 
 const subjectField = form['subject'];
@@ -12,7 +14,7 @@ const testerField = form['tester'];
 const formElements = [
   subjectField, timeStartField, timeEndField,
 ];
-
+const formTimeElements = [timeStartField, timeEndField];
 const formElementsForValidation = [noteTextArea, distanceField, testerField]
   .concat(formElements);
 
@@ -78,53 +80,66 @@ const retrieveForm = () => {
     testerField: testerField.value,
     distanceField: distanceField.value
   }
-
   // console.log('-- FORM', formObj);
-  // console.log('&&& - formIsValid()', formIsValid());
-
-  formValidation();
-}
-
-const formIsValid = () => {
-  const b1 = formElements.every((item) => {
-    console.log('*** item', item.value);
-    return !!item.value;
-  });
-
-  const b2 = (distanceField.value !== '-1');
-  const b3 = (testerField.value !== '-1');
-
-  return (b1 && b2 && b3);
 }
 
 const formValidation = () => {
+  let validFlag = true;
   
   formElementsForValidation.forEach(el => {
     if (el.value === '' || el.value === '-1') {
-      el.classList.add('is-invalid');
-      el.classList.remove('is-valid');
-    } else {
-      el.classList.remove('is-invalid');
-      el.classList.add('is-valid');
-    }
+      addIsInvalid(el);
+      validFlag = false;
+    } else { addIsValid(el); }
   });
 
-  
+  timeValidation();
 
-  // if (noteTextArea.value) {
-  //   noteTextArea
-  //   noteTextArea
-  // } else 
+  if (validFlag === false) {return validFlag;}
 
+  console.log('befor return - validFlag', validFlag);
+  return validFlag;
+};
 
-}
+const timeValidation = () => {
+  const start = timeStartField.value;
+  const end = timeEndField.value;
+  let flag = false;
+
+  if (start && end) {
+    const startHNum = start.split(':')[0];
+    const startMNum = start.split(':')[1];
+    const endHNum = end.split(':')[0];
+    const endMNum = end.split(':')[1];
+
+    // проверка на то, что событие "сначала начинается, а потом заканчивается"
+    flag = (endHNum < startHNum) ? false 
+      : ((startHNum === endHNum) && (endMNum <= startMNum)) ? false : true ;
+    
+    // показываем ошибки
+    if (flag === false) {
+      formTimeElements.forEach(el => addIsInvalid(el));
+      showError('TSE');
+    }
+  }
+  return flag;
+};
 
 const initForm = () => {
-  formElements.forEach(el => {
-    el.addEventListener('focus', () => {
-      el.classList.remove('is-invalid');
-    });
+  subjectField.addEventListener('focus', () => {
+    subjectField.classList.remove('is-invalid');
   });
+
+  timeStartField.addEventListener('focus', () => {
+    timeStartField.classList.remove('is-invalid');
+    hideError('TSE');
+  });
+
+  timeEndField.addEventListener('focus', () => {
+    timeEndField.classList.remove('is-invalid');
+    hideError('TSE');
+  });
+
 
   noteTextArea.addEventListener('focus', () => {
     noteTextArea.classList.remove('is-invalid');
@@ -139,8 +154,17 @@ const initForm = () => {
   });
 }
 
+const addIsValid = (el) => {
+  el.classList.remove('is-invalid');
+  el.classList.add('is-valid');
+}
+const addIsInvalid = (el) => {
+  el.classList.remove('is-valid');
+  el.classList.add('is-invalid');
+}
+
 module.exports = {
   disabledForm, abledForm, resetForm,
-  setForm, retrieveForm, formIsValid,
+  setForm, retrieveForm,
   formValidation, initForm, resetFormValidation
 };
