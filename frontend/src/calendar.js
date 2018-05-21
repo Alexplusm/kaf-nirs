@@ -1,10 +1,7 @@
 const {openBlankForm, openWithEventForm} = require('./form/form');
-
-const unit_js = document.getElementById("unitId").value;
-const unit_name_js = document.getElementById("unitName").value;
-const logined_user = document.getElementById("loginedUser").value;
-const dataWithoutTime = "1";
-let eventId = 0;
+const {
+  csrfSafeMethod, unit_js, unit_name_js, logined_user
+} = require('./utils');
 
 // setup params
 const minTime = '09:00:00';

@@ -8,7 +8,15 @@ const {
   formValidation,
 } = require('./formFields');
 
-const {ajaxRequest} = require('./requests');
+const {
+  setStartDateToTitle,
+  setEventIDToUpdate,
+} = require('./../utils');
+
+const {
+  ajaxRequest,
+  addNewEventReq, updateEventReq, deleteEventReq,
+} = require('./requests');
 
 const {FormState} = require('./formState');
 const formState = new FormState();
@@ -27,10 +35,12 @@ const openBlankForm = (data) => {
   formState.setNewState(1);
   
   const wrapData = moment(data);
+  // console.log('%%% wrapData', wrapData);
+  // const wrapData = moment(data).format('YYYY-MM-DD HH:mm');
 
   if (wrapData.isValid) {
+    setStartDateToTitle(wrapData.format('YYYY-MM-DD'));
     pickTime = wrapData.format('HH:mm');
-    // console.log('+++ openBlankForm - pickTime', pickTime);
 
     // при клике на день выбирается 00:00 - пропускаем инициализацию времени!
     if (pickTime !== '00:00') { setForm({timeStart: pickTime}); }
@@ -47,6 +57,9 @@ const openWithEventForm = (event) => {
 
   const timeStart = event['start'].format('HH:mm');
   const timeEnd = event['end'].format('HH:mm');
+  setStartDateToTitle(event['start'].format('YYYY-MM-DD'));
+
+  setEventIDToUpdate(event['id']);
 
   let dataFromEvent = {
     subject: event['test_object'],
@@ -71,6 +84,8 @@ const {btnDelete, btnUpdate, btnCreate,
 
 btnDelete.addEventListener('click', () => {
   console.log('btnDelete', btnDelete);
+
+  deleteEventReq();
 });
 
 btnUpdate.addEventListener('click', () => {
@@ -83,11 +98,16 @@ btnCreate.addEventListener('click', () => {
   console.log('btnCreate', btnCreate);
 
   formValidation();
-  retrieveForm();
+  const newEvent = retrieveForm();
+  addNewEventReq(newEvent);
 });
 
 btnApplyUpdates.addEventListener('click', () => {
   console.log('btnApplyUpdates', btnApplyUpdates);
+  
+  formValidation();
+  const newEvent = retrieveForm();
+  updateEventReq(newEvent);
 });
 
 // Обработка кнопок -!-!- Обработка кнопок
@@ -95,7 +115,6 @@ btnApplyUpdates.addEventListener('click', () => {
 
 
 // test zone
-
 // test zone
 
 module.exports = {

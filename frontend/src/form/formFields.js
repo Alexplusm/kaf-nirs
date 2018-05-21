@@ -80,7 +80,8 @@ const retrieveForm = () => {
     testerField: testerField.value,
     distanceField: distanceField.value
   }
-  // console.log('-- FORM', formObj);
+  console.log('-- FORM', formObj);
+  return formObj;
 }
 
 const formValidation = () => {

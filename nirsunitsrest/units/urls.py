@@ -55,9 +55,6 @@ urlpatterns = [
 	url(r'^schedule/(?P<unit>.*)/$', UnitScheduleListView.as_view(), name='unit_schedule_list'),
 	# url(r'^record/(?P<unit>.*)/$', record_add, name='record_unit_add'),
 
-
-
-
 ]
 
 urlpatterns += router.urls

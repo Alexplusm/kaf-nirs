@@ -366,7 +366,7 @@ def  schedule_calendar(request, unit=None):
 from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
-from units.serializers import UnitScheduleCreateSerializer, UnitScheduleListSerializer
+from units.serializers import UnitScheduleCreateSerializer, UnitScheduleListSerializer, UnitScheduleUpdateSerializer
 from units.permissions import IsOwnerOrReadOnly
 
 
@@ -383,6 +383,8 @@ class UnitScheduleViewSet(viewsets.ModelViewSet):
             return UnitScheduleListSerializer
         if self.action == 'create':
             return UnitScheduleCreateSerializer
+        if self.action == 'update':
+            return UnitScheduleUpdateSerializer
         return UnitScheduleCreateSerializer
 
 
